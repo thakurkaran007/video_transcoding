@@ -3,7 +3,7 @@ import { decrementKey, dequeueJobFromQueue, enqueueJobInQueue, getKey, getQueueL
 import { REDIS_KEYS, VIDEO_PROGRESS_STATUS, type Video } from '@prisma/client';
 import { db } from '../prisma';
 import * as z from 'zod';
-import type { jobConfigSchema } from '../types';
+import type { ECSRequestBody, jobConfigSchema } from '../types';
 import { deleteObjectFile } from '../utils/s3SignedUrl';
 import triggerTranscodingJob from '../utils/transcoder_ecs';
 
@@ -15,8 +15,8 @@ export const handleS3Trigger = async (req: Request, res: Response) => {
     }
 
     try {
-        const key = s3EventData.Records[0].s3.object.key;
-        const metadata = s3EventData.Records[0].s3.object.metadata || {};
+        const key = s3EventData.object.key;
+        const metadata = s3EventData.object.metadata || {};
 
         const currentJobCount = parseInt(await getKey(REDIS_KEYS.VIDEO_PROCESSING_COUNT) || '0');
         const filename = key.split('/').pop().split('.')[0];
@@ -28,10 +28,6 @@ export const handleS3Trigger = async (req: Request, res: Response) => {
                 userId: metadata.userId,
                 title: metadata.title || filename,
                 description: metadata.description || '',
-                type: metadata.type,
-                videoResolution: metadata.videoResolution || '720p',
-                thumbnailUrl: metadata.thumbnailUrl || '',
-                subtitleUrl: metadata.subtitleUrl || '',
             },
         });
 
@@ -90,8 +86,6 @@ export const handleS3Trigger = async (req: Request, res: Response) => {
 }
 
 export const handleECSTrigger = async (req: Request, res: Response) => {
-    type ECSRequestBody = Pick<Video, 'objectKey' | 'progress' | 'videoResolution' | 'thumbnailUrl' | 'subtitleUrl'>;
-
     const X : ECSRequestBody = req.body;
 
     if (!X.objectKey || !X.progress) {
@@ -120,7 +114,7 @@ export const handleECSTrigger = async (req: Request, res: Response) => {
                 progress: X.progress,
                 thumbnailUrl: X.thumbnailUrl,
                 subtitleUrl: X.subtitleUrl,
-                videoResolution: X.videoResolution
+                videoResolutions: X.videoResolutions || {}
             }
         });
 

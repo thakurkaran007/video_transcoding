@@ -47,12 +47,12 @@ model Video {
   thumbnailUrl        String?
   objectKey           String   @unique
   subtitleUrl         String?
-  type                String
+  type                String   @default("mp4")
   userId              String
   viewCount           Int      @default(0)
   isPublic            Boolean  @default(false)
   progress            VIDEO_PROGRESS_STATUS @default(PENDING)
-  videoResolution     VideoResolution
+  videoResolutions    Json?
   User                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
@@ -68,13 +68,6 @@ model VerificationToken {
 enum UserRole {
   USER
   ADMIN
-}
-
-enum VideoResolution {
-  P360
-  P480
-  P720
-  Playlist
 }
 
 enum VIDEO_PROGRESS_STATUS {

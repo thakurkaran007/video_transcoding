@@ -1,3 +1,4 @@
+import type { Video } from '@prisma/client';
 import * as z from 'zod';
 
 export const putConfigSchema = z.object({
@@ -13,3 +14,5 @@ export const jobConfigSchema = z.object({
     key: z.string().min(1),
     progress: z.enum(['PENDING', 'PROCESSING', 'COMPLETED', 'FAILED', 'QUEUED']),
 });
+
+export type ECSRequestBody = Pick<Video, 'objectKey' | 'progress' | 'videoResolutions' | 'thumbnailUrl' | 'subtitleUrl'>;
