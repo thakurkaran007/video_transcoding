@@ -5,6 +5,7 @@ import { db } from '../prisma';
 import * as z from 'zod';
 import type { jobConfigSchema } from '../types';
 import { deleteObjectFile } from '../utils/s3SignedUrl';
+import triggerTranscodingJob from '../utils/transcoder_ecs';
 
 export const handleS3Trigger = async (req: Request, res: Response) => {
     const { s3EventData }: any = req.body;
@@ -47,7 +48,7 @@ export const handleS3Trigger = async (req: Request, res: Response) => {
                 progress: VIDEO_PROGRESS_STATUS.PROCESSING,
             }
 
-            // await trigger(job)
+            await triggerTranscodingJob(job);
             
             await db.video.update({
                 where: {
@@ -158,7 +159,7 @@ export const handleECSTrigger = async (req: Request, res: Response) => {
 
             await incrementKey(REDIS_KEYS.VIDEO_PROCESSING_COUNT);
 
-            // await trigger(job)
+            await triggerTranscodingJob(job);
 
             res.status(200).json({ message: 'Triggered next job from queue', job });
         }
