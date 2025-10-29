@@ -1,6 +1,6 @@
 import type { Request } from 'express';
 import type { Response } from 'express';
-import { putConfigSchema } from '../types/utils';
+import { putConfigSchema } from '../types';
 import { generateUrlToPutObject } from '../utils/s3SignedUrl';
 import { db } from '../prisma';
 
