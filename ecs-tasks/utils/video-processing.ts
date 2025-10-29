@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { all } from 'axios';
 import path from 'path';
 import fs from 'fs';
 import { Worker } from 'worker_threads';
@@ -249,5 +249,113 @@ async function deleteObjectFromTempBucket(key:string) {
     } catch (error) {
         console.error(`Error deleting ${key} from temp bucket:`, error);
     }
-    
+}
+
+async function uploadFolderToS3(folderPath:string, bucketName:string, videoName:string, prefix:string="") {
+    try {
+        const files = fs.readdirSync(folderPath);
+        const uploadPromisses = [];
+
+        for (const file of files) {
+            const filePath = path.join(folderPath, file);
+            const fileStats = fs.statSync(filePath);
+            
+            if (fileStats.isDirectory()) {
+                const subPrefix = prefix ? `${prefix}${file}/` : `${file}/`;
+                uploadPromisses.push(uploadFolderToS3(filePath, bucketName, videoName, subPrefix));
+            } else if (fileStats.isFile()) {
+                uploadPromisses.push(uploadFile(filePath, bucketName, videoName, prefix));
+            }
+        }
+
+        await Promise.all(uploadPromisses);
+        return allLinks;
+    } catch (error) {
+        console.error(`Error uploading folder ${folderPath} to S3:`, error);
+    }
+}
+
+async function generateThumbnail(key: string, bucketName: string) {
+    const videoUrl = `https://s3.${process.env.AWS_REGION}.amazonaws.com/${bucketName}/${key}`;
+    try {
+        const response = await axios.post(process.env.THUMBNAIL_SERVICE_URL || '', {
+            videoUrl: videoUrl
+        })
+
+        if (response.status === 200 && response.data.thumbnailUrl) {
+            console.log(`Generated thumbnail for ${videoUrl}: ${response.data.thumbnailUrl}`);
+            return response.data.thumbnailUrl;
+        }
+    } catch (error) {
+        console.error(`Error generating thumbnail for ${videoUrl}:`, error);
+    }
+}
+
+async function generateSubtitles(key: string, bucketName: string) {
+    const videoUrl = `https://s3.${process.env.AWS_REGION}.amazonaws.com/${bucketName}/${key}`;
+    const videoName = key.split('/').pop()?.split('.')[0];
+    try {
+        const response = await axios.post(process.env.SUBTITLE_SERVICE_URL || '', {
+            videoUrl: videoUrl
+        })
+
+        if (response.status !== 200 || !response.data.subtitles) {
+            console.error(`Error fetching subtitles for ${videoUrl}`);
+            return;
+        }
+
+        const srtContent = response.data;
+        const vttContent = convertSrtToVtt(srtContent);
+
+        const subtitlePath = path.join(
+            __dirname,
+            "..",
+            "downloads",
+            videoName!,
+            "subtitles.vtt"
+        )
+
+        const subtitleDir = path.dirname(subtitlePath);
+        if (!fs.existsSync(subtitleDir)) {
+          fs.mkdirSync(subtitleDir, { recursive: true });
+        }
+
+        fs.writeFileSync(subtitlePath, vttContent);
+        console.log("Subtitle file created at:", subtitlePath);
+
+        const fileStream = fs.createReadStream(subtitlePath);
+        const s3Key = `videos/${videoName}/subtitles.vtt`;
+
+        await s3Client.send(
+          new PutObjectCommand({
+            Bucket: process.env.FINAL_S3_BUCKET_NAME,
+            Key: s3Key,
+            Body: fileStream,
+            ContentType: "text/vtt",
+          })
+        );
+
+        const subtitleUrl = `https://s3.${process.env.AWS_REGION}.amazonaws.com/${process.env.FINAL_S3_BUCKET_NAME}/${s3Key}`;
+        allLinks.subtitle = subtitleUrl;
+
+        console.log("Subtitle uploaded successfully to S3:", subtitleUrl);
+
+        fs.unlinkSync(subtitlePath);
+
+        return subtitleUrl;
+    } catch (error) {
+        console.error(`Error processing subtitles for ${videoUrl}:`, error);
+    }
+}
+
+export {
+    convertVideo,
+    runParllelTasks,
+    generatePlaylistFile,
+    downloadFromS3,
+    uploadFile,
+    deleteObjectFromTempBucket,
+    uploadFolderToS3,
+    generateThumbnail,
+    generateSubtitles
 }
