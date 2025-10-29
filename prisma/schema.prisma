@@ -44,9 +44,9 @@ model Video {
   title               String
   description         String
   filename            String
-  thumbnailUrl        String
+  thumbnailUrl        String?
   objectKey           String   @unique
-  subtitleUrl         String
+  subtitleUrl         String?
   type                String
   userId              String
   viewCount           Int      @default(0)

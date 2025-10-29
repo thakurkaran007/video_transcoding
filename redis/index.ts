@@ -1,12 +1,10 @@
-import dotenv from "dotenv";
 import Redis from "ioredis";
 import * as z from "zod";
 import { jobConfigSchema } from "../types";
 import { REDIS_KEYS } from "@prisma/client";
 
-dotenv.config();
 
-const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
+const redis = new Redis("redis://localhost:6379");
 
 export async function connectRedis(): Promise<void> {
     try {
