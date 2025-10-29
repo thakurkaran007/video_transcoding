@@ -1,6 +1,8 @@
 import { S3Client, GetObjectCommand, HeadObjectCommand, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import type { putConfig } from '../types/utils';
+import { z } from 'zod';
+import type { putConfigSchema } from '../types/utils';
+
 
 const s3Client = new S3Client({
     region: process.env.AWS_REGION,
@@ -23,14 +25,14 @@ async function getObjectMetadata(key: string) {
     }
 }
 
-async function generateUrlToPutObject(config: putConfig) {
+async function generateUrlToPutObject(config: z.infer<typeof putConfigSchema>) {
     try {
         const command = new PutObjectCommand({
             Bucket: process.env.S3_BUCKET_NAME,
             Key: `uploads/videos/${config.filename}`,
             ContentType: config.contentType,
             Metadata: {
-                userId: config.userId,
+                userId: config.userId || '',
                 title: config.title,
                 description: config.description
             }
