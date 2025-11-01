@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { decrementKey, dequeueJobFromQueue, enqueueJobInQueue, getKey, getQueueLength, incrementKey, setKey } from '../redis';
-import { REDIS_KEYS, VIDEO_PROGRESS_STATUS, type Video } from '@prisma/client';
+import { REDIS_KEYS, VIDEO_PROGRESS_STATUS } from '@prisma/client';
 import { db } from '../prisma';
 import * as z from 'zod';
 import type { ECSRequestBody, jobConfigSchema } from '../types';
@@ -26,8 +26,8 @@ export const handleS3Trigger = async (req: Request, res: Response) => {
                 filename,
                 objectKey: key,
                 userId: metadata.userId,
-                title: metadata.title || filename,
-                description: metadata.description || '',
+                title: metadata.title,
+                description: metadata.description,
             },
         });
 

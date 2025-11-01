@@ -28,7 +28,7 @@ async function getObjectMetadata(key: string) {
 async function generateUrlToPutObject(config: z.infer<typeof putConfigSchema>) {
     try {
         const command = new PutObjectCommand({
-            Bucket: process.env.TEMP_BUCKET_NAME,
+            Bucket: process.env.TEMP_S3_BUCKET_NAME,
             Key: `uploads/videos/${config.filename}`,
             ContentType: config.contentType,
             Metadata: {

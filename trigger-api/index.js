@@ -1,11 +1,11 @@
 import axios from "axios";
 
 
-module.exports.handler = async (event: any) => {
+module.exports.handler = async (event) => {
     try {
         const s3EventData = event.Records[0].s3;
 
-        const response = await axios.post(process.env.API_ENDPOINT!, {
+        const response = await axios.post(process.env.API_ENDPOINT, {
             s3EventData
         })
 

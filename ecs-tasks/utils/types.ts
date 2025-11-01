@@ -1,5 +1,5 @@
-export type format {
-    name: string;
-    scale: string;
-    resolution: string;
+export type format = {
+    name: string
+    scale: string
+    resolution: string
 }
