@@ -294,7 +294,7 @@ async function generateSubtitles(key: string, bucketName: string) {
 
   for (const key of [sourceKey, `${jobName}.json`, ".write_access_check_file.temp"]) {
     try {
-      await s3Client.send(new DeleteObjectCommand({ Bucket: outputBucket, Key: key }));
+      await deleteObjectFromTempBucket(key);
     } catch {}
   }
 
