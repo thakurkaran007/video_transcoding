@@ -1,0 +1,21 @@
+{
+    "name": "@repo/db",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+    },
+    "exports": {
+        "./index": "./src/*",
+        "./dist": "./dist/index.js"
+    },
+    "dependencies": {
+        "@prisma/client": "^6.11.1",
+        "@types/pg": "^8.11.13",
+        "pg": "^8.14.1"
+    },
+    "devDependencies": {
+        "prisma": "^6.11.1",
+        "typescript": "^5.5.4"
+    }
+}
