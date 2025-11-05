@@ -27,7 +27,8 @@ The system is built on AWS services, including S3, Lambda, API Gateway, ECR and 
 ### Technologies
 
 - Node.js
-- AWS (S3, Lambda, API Gateway, ECR, ECS)
+- NextJs
+- AWS (S3, CloudFront + Signed Cookies, hostedzones, Lambda, API Gateway, ECR, ECS)
 - Docker
 
 ### Problems faced
@@ -43,5 +44,3 @@ The system is built on AWS services, including S3, Lambda, API Gateway, ECR and 
 - **Automatically captions generation**: Automatically generate captions for the videos using machine learning.
 
 ### Contact
-
-Feel free to contact me at [email](mailto:varshilshah.in@gmail.com) for any queries or suggestions.

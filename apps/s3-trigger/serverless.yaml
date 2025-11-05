@@ -4,7 +4,7 @@ frameworkVersion: "3"
 provider:
   name: aws
   runtime: nodejs18.x
-  region: us-east-1
+  region: ${env:MY_AWS_REGION}
   environment:
     basePath: ./
     API_ENDPOINT: ${env:API_ENDPOINT}
@@ -24,6 +24,6 @@ functions:
     handler: index.handler
     events:
       - s3:
-          bucket: my-name-is-karan-thakur
+          bucket: ${env:TEMP_S3_BUCKET_NAME}
           event: s3:ObjectCreated:*
           existing: true

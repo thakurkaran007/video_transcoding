@@ -43,11 +43,13 @@ export const signIn = async (req: Request, res: Response) => {
   res.status(200).json({ message: "Signed in successfully.", token });
 };
 
+
+// AWS CloudFront Signed Cookies for protected content
 function getSignedCookiesForBlob() {
   const cdnDistributionDomain = process.env.CDN_DISTRIBUTION_DOMAIN;
   const privateKey = process.env.CDN_PRIVATE_KEY!;
   const interval = 86400 * 1000; // 1 day
-
+  
   const policy = {
     Statement: [
       {

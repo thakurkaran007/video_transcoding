@@ -54,7 +54,6 @@ functions:
       - httpApi: "*"
     vpc:
       securityGroupIds:
-        - ""
-      subnetIds:
-        - ""
-        - ""
+        - ${env:SECURITY_GROUPS}
+      subnetIds: 
+        - ${env:SUBNETS}
