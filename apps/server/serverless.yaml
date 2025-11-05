@@ -4,7 +4,7 @@ frameworkVersion: "4"
 provider:
   name: aws
   runtime: nodejs18.x
-  region: us-east-1
+  region: ${env:MY_AWS_REGION}
   environment:
     basePath: ../
     ECS_CONTAINER_NAME: ${env:ECS_CONTAINER_NAME}
@@ -54,7 +54,7 @@ functions:
       - httpApi: "*"
     vpc:
       securityGroupIds:
-        - sg-054e5f935327c2e38 
+        - ""
       subnetIds:
-        - subnet-0b875615532524226
-        - subnet-0e835e17754bd086f
+        - ""
+        - ""
