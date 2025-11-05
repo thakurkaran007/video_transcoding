@@ -32,7 +32,7 @@ The system is built on AWS services, including S3, Lambda, API Gateway, ECR and 
 - Docker
 
 ### Problems faced
-- **Unable to access the transcoded videos**: The transcoded videos were not accessible due to incorrect permissions. This was resolved by updating the bucket policy to allow public access. More securely, we used AWS CloudFront with Signed Cookies to restrict access to authorized users only. Had to configure cdn distribution behavior to use signed cookies for accessing the protected content.
+- **Unable to access the transcoded videos**: The transcoded videos were not accessible due to incorrect permissions. This was resolved by updating the bucket policy to allow public access. More securely, we used **AWS CloudFront with Signed Cookies** to restrict access to authorized users only. Had to **configure cdn distribution behavior** to use signed cookies for accessing the protected content.
 - **Error while downloading video on docker**: The video was not downloading on the docker container due to incorrect path. This was resolved by updating the path to the video in the code.
 - **Video transcoding taking too long**: The transcoding process was taking too long due to the large size of the video. Use worker threads to improve the performance of the transcoding process.
 
