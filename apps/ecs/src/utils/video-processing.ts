@@ -182,7 +182,7 @@ async function uploadFile(filePath: string, bucketName: string, videoName: strin
     );
 
     if (fileName.includes('index.m3u8') || fileName.includes('playlist.m3u8')) {
-      const objectUrl = `https://${bucketName}.s3.${process.env.MY_AWS_REGION}.amazonaws.com/${key}`;
+      const objectUrl = `https://${process.env.CDN_DISTRIBUTION_DOMAIN}/${key}`;
       if (fileName.includes('playlist.m3u8')) {
         allLinks['playlist'] = objectUrl;
       } else {
