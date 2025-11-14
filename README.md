@@ -1,3 +1,6 @@
+![Architecture Diagram](/images/arch.png)
+
+
 ## Video Transcoding Service
 
 This project is a scalable video transcoding system built on AWS services and Node.js, aimed at automatically generating multiple resolutions of uploaded videos. Internally uses **HLS (HTTP Live Streaming)** and **FFmpeg** to generate multiple resolutions of the video.
@@ -21,8 +24,6 @@ The system is built on AWS services, including S3, Lambda, API Gateway, ECR and 
 1. User uploads a video to the S3 bucket.
 2. S3 triggers a Lambda function to transcode the video into multiple resolutions.
 3. The Lambda function sends the transcoded videos to another S3 bucket.
-
-![Architecture Diagram](/images/arch.png)
 
 ### Technologies
 
