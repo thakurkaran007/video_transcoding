@@ -5,10 +5,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { deleteObjectFromTempBucket, downloadFromS3, generatePlaylistFile, generateSubtitles, runParllelTasks, uploadFolderToS3 } from './utils/video-processing.js';
 
-// Load environment variables
+
 dotenv.config();
 
-// ESM-safe version of __dirname and __filename
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -27,8 +26,8 @@ async function markTaskAsCompleted(
       videoResolutions: allFilesObjects,
       thumbnailUrl,
       subtitleUrl: allFilesObjects.subtitles,
-    });
-
+    }); 
+    
     if (response.status === 200) {
       console.log("Webhook called successfully (completed)!");
     }
@@ -64,14 +63,10 @@ async function markTaskAsCompleted(
     }
 
     console.log("Downloading video from S3 bucket...");
-    await downloadFromS3(key, bucketName, path.join(folderPath, videoName));
 
-    const [thumbnailUrl] = await Promise.all([
-      generateSubtitles(key, bucketName),
-      downloadFromS3(key, bucketName, path.join(folderPath, videoName)),
-    ]);
+    await downloadFromS3(bucketName, key, path.join(folderPath, videoName))
+    // await generateSubtitles(key, bucketName);
 
-    console.log("Thumbnail URL => ", thumbnailUrl);
     console.log("Video downloaded successfully!");
 
     const downloadedVideoPath = path.join(folderPath, videoName);
@@ -88,7 +83,7 @@ async function markTaskAsCompleted(
     );
 
     await Promise.all([
-      markTaskAsCompleted(key, allLinks!, thumbnailUrl),
+      markTaskAsCompleted(key, allLinks!),
       deleteObjectFromTempBucket(key),
     ]);
 

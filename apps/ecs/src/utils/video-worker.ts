@@ -27,10 +27,11 @@ const convertVideo = (format: formatType, folderPath: string, videoPath: string)
         "-start_number 0",
         "-hls_time 10",
         "-hls_list_size 0",
+        `-hls_segment_filename ${path.join(outputFolderPath, "index%d.ts")}`,
         "-f hls",
       ])
       .output(path.join(outputFolderPath, "index.m3u8"))
-      .on("end", () => {
+      .on("end", () => {  
         console.log(`Video converted to ${format.name} successfully!`);
         resolve();
       })

@@ -58,37 +58,37 @@ const transcribeClient = new TranscribeClient({
   },
 });
 
-function convertVideo(format: formatType, folderPath: string, videoPath: string) {
-  return new Promise<void>((resolve, reject) => {
-    const outputPath = path.join(folderPath, format.name);
+// function convertVideo(format: formatType, folderPath: string, videoPath: string) {
+//   return new Promise<void>((resolve, reject) => {
+//     const outputPath = path.join(folderPath, format.name);
 
-    if (!fs.existsSync(outputPath)) {
-      fs.mkdirSync(outputPath, { recursive: true });
-    }
+//     if (!fs.existsSync(outputPath)) {
+//       fs.mkdirSync(outputPath, { recursive: true });
+//     }
 
-    ffmpeg(videoPath)
-      .outputOptions([
-        "-profile:v baseline",
-        "-level 3.0",
-        `-vf scale=${format.scale}`,
-        "-start_number 0",
-        "-hls_time 10",
-        "-hls_list_size 0",
-        `-hls_segment_filename ${path.join(outputPath, "segment_%03d.ts")}`,
-        "-f hls",
-      ])
-      .output(path.join(outputPath, "index.m3u8"))
-      .on('end', () => {
-        console.log(`Finished processing ${format.name}`);
-        resolve();
-      })
-      .on('error', (err) => {
-        console.error(`Error processing ${format.name}:`, err);
-        reject(err);
-      })
-      .run();
-  });
-}
+//     ffmpeg(videoPath)
+//       .outputOptions([
+//         "-profile:v baseline",
+//         "-level 3.0",
+//         `-vf scale=${format.scale}`,
+//         "-start_number 0",
+//         "-hls_time 10",
+//         "-hls_list_size 0",
+//         `-hls_segment_filename ${path.join(outputPath, "segment_%03d.ts")}`,
+//         "-f hls",
+//       ])
+//       .output(path.join(outputPath, "index.m3u8"))
+//       .on('end', () => {
+//         console.log(`Finished processing ${format.name}`);
+//         resolve();
+//       })
+//       .on('error', (err) => {
+//         console.error(`Error processing ${format.name}:`, err);
+//         reject(err);
+//       })
+//       .run();
+//   });
+// }
 
 async function runParllelTasks(folderPath: string, videoPath: string) {
   console.log("Starting parallel video conversion tasks...");
@@ -184,7 +184,7 @@ async function uploadFile(filePath: string, bucketName: string, videoName: strin
     if (fileName.includes('index.m3u8') || fileName.includes('playlist.m3u8')) {
       const objectUrl = `https://${process.env.CDN_DISTRIBUTION_DOMAIN}/${key}`;
       if (fileName.includes('playlist.m3u8')) {
-        allLinks['playlist'] = objectUrl;
+        allLinks['auto'] = objectUrl;
       } else {
         if (key.includes('360P')) allLinks['360P'] = objectUrl;
         else if (key.includes('480P')) allLinks['480P'] = objectUrl;
@@ -238,6 +238,7 @@ async function generateSubtitles(key: string, bucketName: string) {
   const videoName = key.split("/").pop()!.split(".")[0]!;
   const mediaUri = `https://${bucketName}.s3.${process.env.MY_AWS_REGION}.amazonaws.com/${key}`;
   const outputBucket = process.env.FINAL_S3_BUCKET_NAME;
+  const cloudFrontDomain = process.env.CDN_DISTRIBUTION_DOMAIN;
   const jobName = `video-${videoName}-subtitles`;
   const destKey = `videos/${videoName}/subtitles.vtt`;
 
@@ -247,7 +248,7 @@ async function generateSubtitles(key: string, bucketName: string) {
         Key: destKey,
     }))
     console.log("Subtitles already exist, skipping generation.");
-    allLinks['subtitles'] = `https://${outputBucket}.s3.${process.env.MY_AWS_REGION}.amazonaws.com/${destKey}`;
+    allLinks['subtitles'] = `https://${cloudFrontDomain}/${destKey}`;
     return allLinks['subtitles'];
   } catch (err: any) {
     if (err.name !== "NotFound" && err.$metadata?.httpStatusCode !== 404) {
@@ -298,7 +299,7 @@ async function generateSubtitles(key: string, bucketName: string) {
     } catch {}
   }
 
-  const subtitleUrl = `https://${outputBucket}.s3.${process.env.MY_AWS_REGION}.amazonaws.com/${destKey}`;
+  const subtitleUrl = `https://${cloudFrontDomain}/${destKey}`;
   console.log("✅ Subtitle saved to:", subtitleUrl);
   allLinks['subtitles'] = subtitleUrl;
 
@@ -306,7 +307,7 @@ async function generateSubtitles(key: string, bucketName: string) {
 }
 
 export {
-  convertVideo,
+  // convertVideo,
   runParllelTasks,
   generatePlaylistFile,
   downloadFromS3,
