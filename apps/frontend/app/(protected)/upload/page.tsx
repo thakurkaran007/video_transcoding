@@ -64,7 +64,7 @@ export default function UploadPage() {
           contentType: videoFile.type
       }
 
-      const res:any = await axios.post(process.env.UPLOAD_VIDEO_URL!, payload, { withCredentials: true });
+      const res:any = await axios.post("https://backend.thakurkaran.xyz/api/v1/videos/upload", payload, { withCredentials: true });
 
       if (res.status !== 200) {
         throw new Error(res.data.message || "Failed to get upload URL");

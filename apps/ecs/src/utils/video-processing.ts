@@ -58,37 +58,6 @@ const transcribeClient = new TranscribeClient({
   },
 });
 
-// function convertVideo(format: formatType, folderPath: string, videoPath: string) {
-//   return new Promise<void>((resolve, reject) => {
-//     const outputPath = path.join(folderPath, format.name);
-
-//     if (!fs.existsSync(outputPath)) {
-//       fs.mkdirSync(outputPath, { recursive: true });
-//     }
-
-//     ffmpeg(videoPath)
-//       .outputOptions([
-//         "-profile:v baseline",
-//         "-level 3.0",
-//         `-vf scale=${format.scale}`,
-//         "-start_number 0",
-//         "-hls_time 10",
-//         "-hls_list_size 0",
-//         `-hls_segment_filename ${path.join(outputPath, "segment_%03d.ts")}`,
-//         "-f hls",
-//       ])
-//       .output(path.join(outputPath, "index.m3u8"))
-//       .on('end', () => {
-//         console.log(`Finished processing ${format.name}`);
-//         resolve();
-//       })
-//       .on('error', (err) => {
-//         console.error(`Error processing ${format.name}:`, err);
-//         reject(err);
-//       })
-//       .run();
-//   });
-// }
 
 async function runParllelTasks(folderPath: string, videoPath: string) {
   console.log("Starting parallel video conversion tasks...");

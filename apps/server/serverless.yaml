@@ -53,7 +53,5 @@ functions:
     events:
       - httpApi: "*"
     vpc:
-      securityGroupIds:
-        - ${env:SECURITY_GROUPS}
       subnetIds: 
         - ${env:SUBNETS}

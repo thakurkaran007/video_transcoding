@@ -50,7 +50,6 @@ convertVideo(format, folderPath, videoPath)
     if (parentPort) {
       parentPort.postMessage({ status: "success" });
     } else {
-      // parentPort is null in this context; log instead of posting
       console.warn("parentPort is null: cannot post success message");
     }
   })
@@ -58,7 +57,6 @@ convertVideo(format, folderPath, videoPath)
     if (parentPort) {
       parentPort.postMessage({ status: "error", error: error.message });
     } else {
-      // parentPort is null in this context; log the error
       console.error("parentPort is null: error occurred", error);
     }
   });

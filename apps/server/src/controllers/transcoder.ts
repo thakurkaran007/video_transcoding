@@ -45,7 +45,7 @@ export const handleS3Trigger = async (req: Request, res: Response) => {
                 return res.status(500).json({ error: 'Failed to create video record' });
             }
         }
-
+        
         if (currentJobCount < 5) {
             console.log("Starting transcoding job immediately for:", filename);
             await incrementKey(REDIS_KEYS.VIDEO_PROCESSING_COUNT);

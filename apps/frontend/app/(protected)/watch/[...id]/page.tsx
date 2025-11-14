@@ -57,11 +57,12 @@ const WatchPage = () => {
         }
         
         const res = await axios.get<{ data: { video: VideoType } }>(
-          `${process.env.VIDEOS_URL_USER}/${id}`,
+          `https://backend.thakurkaran.xyz/api/v1/videos/${id}`,
           { withCredentials: true }
         );
         setVideo(res.data.data.video);
         setError(null);
+        console.log("Fetched video data:", res.data.data.video.videoResolutions);
         setCurrentQuality("auto");
       } catch (err) {
         console.error("Error fetching video:", err);
