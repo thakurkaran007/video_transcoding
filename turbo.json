@@ -1,0 +1,23 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["**/*", ".env*"],
+      "outputs": ["apps/web/.next/**", "!apps/web/.next/cache/**", "packages/ui/dist/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "inputs": ["apps/web/**/*.{ts,tsx,js,jsx,json}", "packages/ui/**/*.{ts,tsx,js,jsx,json}"]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"],
+      "inputs": ["apps/web/**/*.{ts,tsx}", "packages/ui/**/*.{ts,tsx}"]
+    },
+    "dev": {
+      "cache": true,
+      "persistent": true,
+      "inputs": ["apps/web/**/*", "packages/ui/**/*", ".env*"]
+    }
+  }
+}

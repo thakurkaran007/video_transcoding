@@ -1,0 +1,58 @@
+service: video-transcoder-server
+frameworkVersion: "4"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ${env:MY_AWS_REGION}
+  environment:
+    basePath: ../
+    ECS_CONTAINER_NAME: ${env:ECS_CONTAINER_NAME}
+    REDIS_HOST: ${env:REDIS_HOST}
+    DATABASE_URL: ${env:DATABASE_URL}
+    MY_AWS_REGION: ${env:MY_AWS_REGION}
+    MY_AWS_ACCESS_KEY_ID: ${env:MY_AWS_ACCESS_KEY_ID}
+    MY_AWS_SECRET_ACCESS_KEY: ${env:MY_AWS_SECRET_ACCESS_KEY}
+    JWT_SECRET: ${env:JWT_SECRET}
+    TEMP_S3_BUCKET_NAME: ${env:TEMP_S3_BUCKET_NAME}
+    FINAL_S3_BUCKET_NAME: ${env:FINAL_S3_BUCKET_NAME}
+    CDN_DISTRIBUTION_DOMAIN: ${env:CDN_DISTRIBUTION_DOMAIN}
+    DDB_TABLE_NAME: ${env:DDB_TABLE_NAME}
+    CDN_KEY_PAIR_ID: ${env:CDN_KEY_PAIR_ID}
+    CDN_PRIVATE_KEY: ${env:CDN_PRIVATE_KEY}
+    CDN_URL: ${env:CDN_URL}
+    DOMAIN: ${env:DOMAIN}
+    FRONTEND_URL: ${env:FRONTEND_URL}
+    SUBNETS: ${env:SUBNETS}
+    SECURITY_GROUPS: ${env:SECURITY_GROUPS}
+    WEBHOOK_URL: ${env:WEBHOOK_URL}
+    CLUSTER: ${env:CLUSTER}
+    TASK: ${env:TASK}
+
+plugins:
+  - serverless-offline
+  - serverless-dotenv-plugin
+useDotenv: true
+
+package:
+  individually: true
+  exclude:
+    - node_modules/**
+    - .env
+    - .git/**
+    - prisma/**
+  include:
+    - dist/**
+    - node_modules/.prisma/**
+    - node_modules/@prisma/**
+    
+functions:
+  api:
+    handler: dist/index.handler   # make sure your dist/index.js exports handler()
+    timeout: 20   # seconds (default is 6)
+    events:
+      - httpApi: "*"
+    vpc:
+      subnetIds: 
+        - subnet-0a3c2b11d2d75e66a
+        - subnet-0e5bbf8699e2e9eff

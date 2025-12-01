@@ -1,0 +1,85 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String              @id @default(cuid())
+  email             String              @unique
+  name              String?
+  emailVerified     DateTime?
+  password          String?
+  accounts          Account[]
+  videos            Video[]
+  role              UserRole            @default(USER)
+  image             String?
+}
+
+model Account {
+  id                 String  @id @default(cuid()) @map("_id")
+  userId             String  @map("user_id")
+  type               String
+  provider           String
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Video {
+  id                  String   @id @default(cuid())
+  title               String
+  description         String
+  filename            String
+  thumbnailUrl        String?
+  objectKey           String   @unique
+  subtitleUrl         String?
+  type                String   @default("mp4")
+  userId              String
+  viewCount           Int      @default(0)
+  videoResolutions    Json?
+  createdAt           DateTime @default(now())
+  isPublic            Boolean  @default(false)
+  progress            VIDEO_PROGRESS_STATUS @default(PENDING)
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  id                  String   @id @default(cuid())
+  email               String
+  token               String   @unique
+  expires             DateTime
+
+  @@unique([email, token])
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum VIDEO_PROGRESS_STATUS {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  QUEUED
+}
+
+enum REDIS_KEYS {
+  VIDEO_PROCESSING_QUEUE
+  VIDEO_PROCESSING_COUNT
+}
