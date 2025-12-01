@@ -7,7 +7,7 @@
 Here is the backend demo of the video transcoding service:
 
 ### 🔹 Demo Video (Click to Watch)
-[Click here to watch the full demo](https://github.com/thakurkaran007/video_transcoding/releases/download/new/demo.mov)
+[Click here to watch the full demo](https://www.youtube.com/watch?v=QxNRUHZf3nE)
 
 > _Click the preview image to watch the demo video._
 
